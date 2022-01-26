@@ -2,7 +2,7 @@ import { Torpedo } from "./Torpedo.js";
 import { Ship } from "./Ship.js";
 import { Gun } from "./Gun.js";
 import { Visual } from "./Visual.js";
-
+//стартовая страница
 function renderStartPage() {
   const body = document.body;
   body.innerHTML = "";
@@ -30,13 +30,21 @@ function renderStartPage() {
   clickStartPage();
 }
 renderStartPage();
-
+//вкладка с правилами
 function renderRulePage() {
   const body = document.body;
   let div = document.createElement("div");
   div.className = "mainDiv";
   body.innerHTML = "";
-  div.innerHTML = `<div class='ruleDiv' id='rule'>правила о том как играть в игру</div>
+  div.innerHTML = `<div class='ruleDiv' id='rule'><ul>
+  <li>Цель игры - поразить ка можно больше кораблей за указанное время.</li>
+  <li>Скорость торпеды фиксированная, повторный пуск можно произвести только после попадания/проподания предыдущей.</li>
+  <li>Скорость и сторона появления кораблей меняется случайным образом.</li>
+  <li>Угол пуска торпеды задаётся стрелками вправо и влево на клавиатуре либо функциональными кнопками на экране.</li>
+  <li>Пуск торпеды производится нажатием на пробел либо на функциональную кнопку на экране.</li>
+  <li>Для перехода в главное меню используйте клавишу Esc либо функциональную кнопку "back" на экране.</li>
+  </ul>
+  </div>
     <div class='back'>Back</div>`;
   body.append(div);
   document.addEventListener("click", function (event) {
@@ -51,6 +59,7 @@ function renderRulePage() {
     }
   });
 }
+//вкладка игры
 function renderGamePage() {
   const body = document.body;
   body.innerHTML = "";
@@ -80,9 +89,6 @@ function renderGamePage() {
   let statusTorrpedo = false;
   let statusGame = "start"; // "start", "game", "end"
   let angle = 90;
-  let mousedownRigft = false;
-  let mousedownLeft = false;
-
 
   let torpedo;
   let ship;
@@ -93,7 +99,6 @@ function renderGamePage() {
     let interval = setInterval(function () {
       if (sec <= 0) {
         clearInterval(interval);
-        statusGame = "end";
       } else {
         sec--;
       }
@@ -128,32 +133,26 @@ function renderGamePage() {
       }
     }
   }
-  //******************************************/
-  function inputName(usersScore) {
+  //работа с именем игрока и записью в localStorage
+  function inputName(scorewww) {
     let result = prompt(
-      `сохранить Ваш результат ${usersScore}-очков? Тогда введите Имя:`,
+      `сохранить Ваш результат ${scorewww}-очков? Тогда введите Имя:`,
       ["JohnDoe"]
     );
     if (result) {
-      if (result.length > 15 || result.length < 3) {
-        alert("Ввведите имя длинее 3 и короче 15 символов");
-        inputName(usersScore);
-        return;
-      }
       if (result.match(/[^A-Za-zА-Яа-яЁё]/g, "") != null) {
         alert("Не используйте специальные символы и цифры в имени");
-        inputName(usersScore);
-        return;
+        return inputName(scorewww);
       }
       if (result.match(/[^A-Za-zА-Яа-яЁё]/g, "") === null) {
-        writeScoreLS(result, usersScore);
+        writeScoreLS(result, scorewww);
       }
     } else {
       renderStartPage();
     }
   }
-  function writeScoreLS(name, scoreA) {
-    let user = { userName: name, userScore: scoreA };
+  function writeScoreLS(name, score) {
+    let user = { userName: name, userScore: score };
     let value = localStorage.getItem("arrayScore");
     let array = JSON.parse(value);
     if (Array.isArray(array)) {
@@ -162,18 +161,20 @@ function renderGamePage() {
     } else {
       let arrayScore = [];
       localStorage.setItem("arrayScore", JSON.stringify(arrayScore));
-      writeScoreLS(name, scoreA);
-      return;
+      return writeScoreLS(name, score);
     }
     renderStartPage();
   }
-  //++++++++++++++++++++++++++++++++++++++++++++++++++
+  //вызыв анимации
+  let frame = 3660;
+  playGame();
+
   function playGame() {
+    let myReq;
     if (statusGame === "start") {
-      timer(30);
+      timer(60);
       statusGame = "game";
     }
-
     if (statusGame === "game") {
       visual.clear(canvas);
       visual.renderTimer(canvas, sec);
@@ -206,16 +207,19 @@ function renderGamePage() {
       }
       shipCollision(torpedo, ship);
       visual.renderScore(ctx, score);
-      buttonDivAction(angle)
-      requestAnimationFrame(playGame);
     }
-
-    if (statusGame === "end") {
-      inputName(score);
+    frame--;
+    myReq = requestAnimationFrame(playGame);
+    if (frame < 0 && statusGame === "game") {
+      statusGame = "stop";
+      if (statusGame === "stop") {
+        statusGame = "end";
+        inputName(score);
+        cancelAnimationFrame(myReq);
+      }
     }
   }
-  playGame();
-//============================================================
+  //обработка нажатий
   document.addEventListener("keydown", function (e) {
     if (statusTorrpedo === false) {
       if (e.keyCode === 32) {
@@ -240,14 +244,12 @@ function renderGamePage() {
     let target = e.target;
     if (target.className === "LeftButton") {
       if (angle < 130) {
-        //angle++;
-        mousedownLeft = true;
+        angle = angle + 2;
       }
     }
     if (target.className === "RightButton") {
       if (angle > 50) {
-        //angle--;
-        mousedownRigft = true;
+        angle = angle - 2;
       }
     }
     if (target.className === "FireButton") {
@@ -259,38 +261,8 @@ function renderGamePage() {
       renderStartPage();
     }
   });
-  document.body.addEventListener("mouseup", function (e) {
-    let target = e.target;
-    if (target.className === "LeftButton") {
-      if (angle < 130) {
-        //angle++;
-        mousedownLeft = false;
-      }
-    }
-    if (target.className === "RightButton") {
-      if (angle > 50) {
-        //angle--;
-        mousedownRigft = false;
-      }
-    }
-  });
-  function buttonDivAction(angle){
-    
-    //let interval = setInterval(function () {
-      //if (mousedownLeft === false && mousedownRigft === false) {
-        //clearInterval(interval); 
-      //} 
-      if(mousedownLeft === false && mousedownRigft === true){
-        angle = angle + 2;
-      }
-      if(mousedownLeft === true && mousedownRigft === false){
-        angle = angle - 2;
-      }
-    //}, 100);
-    return angle
-  }
-  //+++++++++++++++++++++++++++++++++++++++++++++++++++++
 }
+//вкладка рекордов
 function renderEndScorePage() {
   const body = document.body;
   let div = document.createElement("div");
