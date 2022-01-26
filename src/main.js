@@ -81,7 +81,7 @@ function renderGamePage() {
   const canvas = document.querySelector("#Ship");
   const ctx = canvas.getContext("2d");
 
-  let sec;
+  let animationId;
   let score = 0;
   let startShip = true;
   let statusShip = false;
@@ -94,17 +94,6 @@ function renderGamePage() {
   let ship;
   const visual = new Visual();
 
-  function timer(s) {
-    sec = s;
-    let interval = setInterval(function () {
-      if (sec <= 0) {
-        clearInterval(interval);
-      } else {
-        sec--;
-      }
-    }, 1000);
-  }
-
   function shipCollision(torpedo, ship) {
     if (statusTorrpedo === true) {
       if (
@@ -115,7 +104,7 @@ function renderGamePage() {
         statusShip = false;
         startShip = true;
         statusTorrpedo = false;
-        score++;
+        score = score + 1;
       }
 
       if (torpedo.torpedoY < canvas.height / 5 + 15) {
@@ -166,59 +155,60 @@ function renderGamePage() {
     renderStartPage();
   }
   //вызыв анимации
-  let frame = 3660;
-  playGame();
+  function gameWithTimer () {
+    const start = Date.now();
+    const gameDuration = 60000;
 
-  function playGame() {
-    let myReq;
-    if (statusGame === "start") {
-      timer(60);
-      statusGame = "game";
-    }
-    if (statusGame === "game") {
-      visual.clear(canvas);
-      visual.renderTimer(canvas, sec);
-      visual.drawWater();
-      //Gun
-      const gun = new Gun(canvas);
-      gun.renderGun(angle, ctx);
+    function playGame() {
+      if (statusGame === "start") {
+        statusGame = "game";
+      }
+      if (statusGame === "game") {
+        visual.clear(canvas);
+        visual.renderTimer(canvas, Math.floor(60 - ((Date.now() - start)/1000)));
+        visual.drawWater();
+        //Gun
+        const gun = new Gun(canvas);
+        gun.renderGun(angle, ctx);
 
-      // Ship
-      if (startShip === true) {
-        ship = new Ship(canvas);
-        ship.shipRender(canvas);
+        // Ship
+        if (startShip === true) {
+          ship = new Ship(canvas);
+          ship.shipRender(canvas);
 
-        statusShip = true;
-        startShip = false;
-      }
-      if (statusShip === true) {
-        ship.shipMove(canvas);
-      }
-      // Torpedo
-      if (startTorrpedo === true) {
-        torpedo = new Torpedo(gun.topGunX, gun.topGunY, angle);
-        torpedo.showTorpedo(ctx);
+          statusShip = true;
+          startShip = false;
+        }
+        if (statusShip === true) {
+          ship.shipMove(canvas);
+        }
+        // Torpedo
+        if (startTorrpedo === true) {
+          torpedo = new Torpedo(gun.topGunX, gun.topGunY, angle);
+          torpedo.showTorpedo(ctx);
 
-        statusTorrpedo = true;
-        startTorrpedo = false;
+          statusTorrpedo = true;
+          startTorrpedo = false;
+        }
+        if (statusTorrpedo === true) {
+          torpedo.drawTorpedoFlying(ctx);
+        }
+        shipCollision(torpedo, ship);
+        visual.renderScore(ctx, score);
       }
-      if (statusTorrpedo === true) {
-        torpedo.drawTorpedoFlying(ctx);
-      }
-      shipCollision(torpedo, ship);
-      visual.renderScore(ctx, score);
-    }
-    frame--;
-    myReq = requestAnimationFrame(playGame);
-    if (frame < 0 && statusGame === "game") {
-      statusGame = "stop";
-      if (statusGame === "stop") {
-        statusGame = "end";
+
+      if (Date.now() - start < gameDuration) {
+        animationId = requestAnimationFrame(playGame);
+      } else {
+        statusGame ="end"
         inputName(score);
-        cancelAnimationFrame(myReq);
+        cancelAnimationFrame(animationId);
       }
+
     }
+    playGame();
   }
+  gameWithTimer();
   //обработка нажатий
   document.addEventListener("keydown", function (e) {
     if (statusTorrpedo === false) {
@@ -237,6 +227,7 @@ function renderGamePage() {
       }
     }
     if (e.keyCode === 27) {
+      cancelAnimationFrame(animationId);
       renderStartPage();
     }
   });
@@ -258,6 +249,7 @@ function renderGamePage() {
       }
     }
     if (target.className === "GoBack") {
+      cancelAnimationFrame(animationId);
       renderStartPage();
     }
   });

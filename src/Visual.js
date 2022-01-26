@@ -3,7 +3,7 @@ export class Visual {
     renderScore (canvasContext, score) {
         canvasContext.font ="30px Arial";
         canvasContext.fillStyle = "black";
-        canvasContext.fillText("Score: " + score, 20, 40);
+        canvasContext.fillText(`Score: ${score}`, 20, 40);
     }
 
     clear (canvas) {
