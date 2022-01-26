@@ -1,0 +1,160 @@
+@charset "UTF-8";
+@import url(nullstyle.css);
+
+.wrapper {
+	margin: 0 auto;
+    text-align: center;
+}
+.hidden {
+	opacity: 0;
+	position:absolute;
+}
+#Ship, #Water{
+	position: absolute;
+    top: 0px;
+    left: 200px;
+}
+.console {
+	width: 1000px;
+    height: 120px;
+    background: rgba(10, 75, 161, 0.616);
+    position: absolute;
+    top: 750px;
+    left: 200px;	
+}
+.consoleInt {
+	padding-top: 0px;
+    display: flex;
+    flex-flow: row nowrap;	
+}
+.LeftButton, .RightButton,.FireButton {
+	width: 200px;
+	height: 80px;
+	font-size: 50px;
+  	margin: 20px;
+  	padding: 10px;
+	background-color:yellow;
+	border-radius: 10px;
+	border: 3px solid black;
+	}
+.FireButton {
+	background-color: red;
+	}
+.LeftButton{
+	margin-left: 180px;
+	}
+.GoBack {
+	width: 100px;
+	height: 50px;
+	font-size: 20px;
+  	margin: 30px;
+  	padding: 10px;
+	background-color: lime;
+	border-radius: 30px;
+	border: 3px solid black;
+}
+.back {
+	margin:30px;
+	border: 1px solid grey;
+	max-width: 1280px;
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 3px;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	background-color: rgba(19, 179, 152, 0.425);
+	padding: 10px;
+	max-height: 100px;
+	max-width: 120px;
+	font-size: 25px;
+	color:whitesmoke;
+}
+.back:hover{
+	background-color: aquamarine;
+	outline: 1px solid rgb(194, 192, 192);
+	border-radius: 3px;
+	box-shadow: 0 0 13px rgb(194, 192, 192);	
+}
+.GoBack:active, .LeftButton:active, .FireButton:active, .RightButton:active{
+	background-color: rgba(80, 80, 80, 0.466);
+	box-shadow: 0 0 15px rgb(194, 192, 192);
+}
+
+.mainDiv{
+	background-image: url(https://i.gifer.com/C4rp.gif);
+	background-size: 100%;
+	display: block;
+	min-height: 900px;
+	min-width: 800px;
+	padding-top: 200px;
+}
+.buttonDiv{
+	border: 1px solid grey;
+	max-width: 1280px;
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 3px;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	background-color: rgba(19, 179, 152, 0.425);
+	padding: 10px;
+	max-height: 100px;
+	max-width: 120px;
+	font-size: 25px;
+	color:whitesmoke;
+
+}
+.buttonDiv:hover{
+	background-color: aquamarine;
+	outline: 1px solid rgb(194, 192, 192);
+	border-radius: 3px;
+	box-shadow: 0 0 13px rgb(194, 192, 192);
+	
+}
+.ruleDiv {
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 30px;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	color:whitesmoke;
+	max-width: 600px;
+}
+.scoreDiv {
+	margin-left: auto;
+	margin-right: auto;
+	font-size: 30px;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	color:whitesmoke;
+	max-width: 600px;
+}
+.table{
+	max-width: 1280px;
+	margin-left: auto;
+	margin-right: auto;
+	border-radius: 3px;
+	display: flex;
+	justify-content: center;
+	text-align: center;
+	margin: 30;
+	padding: 10px;
+	max-height: 500px;
+	max-width: 300px;
+	font-size: 25px;
+	color:whitesmoke;
+}
+table {
+    width: 100%; /* Ширина таблицы */
+    background: white; /* Цвет фона таблицы */
+    color: white; /* Цвет текста */
+    border-spacing: 1px; /* Расстояние между ячейками */
+   }
+   td, th {
+    background: rgb(0, 128, 32); /* Цвет фона ячеек */
+    padding: 5px; /* Поля вокруг текста */
+   }
